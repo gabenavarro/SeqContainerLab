@@ -1,0 +1,4 @@
+FROM mambaorg/micromamba:2.0-debian11
+
+RUN micromamba install -c bioconda -c conda-forge fastqc-rs==0.3.4 \
+    && micromamba clean -a -y
