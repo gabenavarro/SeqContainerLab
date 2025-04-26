@@ -1,0 +1,29 @@
+FROM gambalab/dragmap:latest@sha256:d1d322d87744f154bc53cd400c35bddfeff4d5787c8f6347764caf27512e3fc0
+
+# Install OS deps, Mambaforge, and clean up
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        wget \
+        bash \
+        bzip2 \
+        ca-certificates \
+        coreutils \
+        tar \
+    && wget -q -P /tmp \
+    https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh \
+    && bash /tmp/Miniforge3-Linux-x86_64.sh -b -p /opt/mamba \
+    && rm -rf /tmp/Mambaforge.sh /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Add conda to path
+ENV PATH="/opt/mamba/bin:$PATH"
+ENV LD_LIBRARY_PATH="/opt/mamba/lib"
+
+# Install Python and bioinformatics tools
+RUN mamba install -y \
+        -c conda-forge \
+        -c bioconda \
+        python=3.11 \
+        samtools=1.21 \
+        gatk4=4.6.1.0 \
+    && mamba clean -afy
